@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TomBloxX — YouTube-креатор та геймер</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Manrope:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070d; --panel:#0f0f1a; --line:#25254a; --text:#e8e8f5; --muted:#8d8db0;
+  --violet:#8b5cf6; --cyan:#22d3ee;
+  --head:'Unbounded','Arial Black',Impact,sans-serif; --body:'Manrope',system-ui,-apple-system,'Segoe UI',sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{position:relative;margin:0;background:var(--bg);color:var(--text);font-family:var(--body);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+a:focus-visible{outline:2px solid var(--cyan);outline-offset:4px}
+
+/* animated neon background */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--bg)}
+.bg i{position:absolute;border-radius:50%;filter:blur(110px);opacity:.28;animation:drift 22s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:46vmax;height:46vmax;background:var(--violet);top:-18vmax;left:-12vmax}
+.bg i:nth-child(2){width:38vmax;height:38vmax;background:var(--cyan);bottom:-16vmax;right:-10vmax;opacity:.18;animation-duration:28s}
+.bg::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(139,92,246,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.06) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse at 50% 30%,#000 10%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 10%,transparent 70%)}
+@keyframes drift{to{transform:translate3d(8vmax,5vmax,0) scale(1.12)}}
+
+/* background game motifs: dark, blurred, edges only */
+.art{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.art svg{position:absolute;width:var(--s);height:auto;color:var(--c);rotate:var(--r,0deg);opacity:.13;
+  filter:blur(1.3px) drop-shadow(0 0 12px var(--c));animation:bob var(--t,16s) ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-14px)}}
+@media (max-width:700px){.art svg{opacity:.07;width:calc(var(--s)*.6)}.art .m-hide{display:none}}
+
+/* latest videos */
+.vgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:860px){.vgrid{grid-template-columns:1fr;max-width:480px;margin-inline:auto}}
+.vcard{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgba(24,24,46,.75),rgba(12,12,22,.75));border:1px solid var(--line);transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;opacity:0;animation:in .8s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i,0)*.12s)}
+a.vcard:hover{transform:translateY(-6px) scale(1.025);border-color:var(--violet);box-shadow:0 0 0 1px var(--violet),0 18px 60px -12px rgba(139,92,246,.7)}
+.vthumb{position:relative;aspect-ratio:16/9;background:#0a0a16;overflow:hidden}
+.vthumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+a.vcard:hover .vthumb img{transform:scale(1.05)}
+.vthumb::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(7,7,13,.7))}
+.vbody{padding:16px 18px 20px;display:grid;gap:10px;text-align:center}
+.vtitle{font:600 1rem/1.4 var(--body);margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vgo{font:500 .72rem var(--head);color:var(--cyan);text-shadow:0 0 12px rgba(34,211,238,.5)}
+.vcard.sk .vthumb{background:linear-gradient(100deg,#0a0a16 30%,#1a1a33 50%,#0a0a16 70%) 0 0/200% 100%;animation:shimmer 1.4s linear infinite}
+.vcard.sk .vbody{height:74px}
+@keyframes shimmer{to{background-position:-200% 0}}
+.vstate{grid-column:1/-1;display:grid;gap:18px;justify-items:center;padding:34px 20px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:18px}
+.vstate .btn{font-size:.8rem;padding:13px 22px}
+
+/* price list */
+.price h2{text-shadow:0 0 18px rgba(139,92,246,.7),0 0 36px rgba(34,211,238,.35)}
+.pbox{max-width:720px;margin-inline:auto;padding:12px 28px 32px;border-radius:20px;background:linear-gradient(160deg,rgba(24,24,46,.75),rgba(12,12,22,.75));border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 0 60px -30px var(--violet)}
+.pgroup{font:500 .8rem var(--head);color:var(--cyan);margin:26px 0 6px;text-align:left;text-shadow:0 0 12px rgba(34,211,238,.4)}
+.prow{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding:15px 12px;border-bottom:1px solid var(--line);border-radius:8px;transition:background .25s,border-color .25s}
+.prow:last-child{border-bottom-color:transparent}
+.prow:hover{background:rgba(139,92,246,.1);border-bottom-color:rgba(139,92,246,.5)}
+.pname{text-align:left}
+.pcost{flex:none;white-space:nowrap;font:800 1.05rem var(--head);color:var(--violet);text-shadow:0 0 14px rgba(139,92,246,.6)}
+.pcta{display:flex;justify-content:center;margin-top:28px}
+.pcta .btn{font-size:.8rem;padding:14px 24px}
+@media (max-width:520px){.pbox{padding:6px 14px 26px}.prow{padding:14px 6px;gap:12px}.pcost{font-size:.95rem}}
+
+.wrap{width:min(1080px,100% - 40px);margin-inline:auto}
+section{padding:clamp(56px,10vw,110px) 0}
+
+/* hero */
+.hero{min-height:92vh;display:flex;align-items:center;padding-top:60px}
+.hero .wrap{display:grid;gap:22px;justify-items:center;text-align:center}
+h1{font:800 clamp(2.8rem,11vw,7.5rem)/1 var(--head);letter-spacing:-.03em;margin:0;
+  background:linear-gradient(100deg,#fff 20%,#c4b5fd 55%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 28px rgba(139,92,246,.55))}
+.title{position:relative;font-size:clamp(2.8rem,11vw,7.5rem);animation:float 7s ease-in-out infinite}
+#mascot{position:absolute;right:7%;bottom:calc(100% - .2em);width:clamp(44px,.9em,130px);pointer-events:none;filter:drop-shadow(0 0 10px rgba(139,92,246,.55))}
+#mascot svg,#mascot img{display:block;width:100%;height:auto}
+.leg{transform-box:fill-box;transform-origin:50% 0;animation:swing 3s ease-in-out infinite alternate}
+.leg.b{animation-delay:-1.5s}
+@keyframes swing{from{rotate:7deg}to{rotate:-7deg}}
+@keyframes float{50%{transform:translateY(-8px)}}
+.role{font:500 clamp(.95rem,2.4vw,1.2rem) var(--head);color:var(--cyan);margin:0;text-shadow:0 0 14px rgba(34,211,238,.5)}
+.lead{max-width:34ch;color:var(--muted);font-size:1.1rem;margin:0 auto}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:12px;font:500 .9rem var(--head);
+  background:linear-gradient(100deg,var(--violet),#5b6cf6 60%,var(--cyan));color:#fff;
+  box-shadow:0 0 0 1px rgba(255,255,255,.12) inset,0 8px 30px rgba(139,92,246,.45);transition:transform .25s,box-shadow .25s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 0 0 1px rgba(255,255,255,.2) inset,0 12px 44px rgba(34,211,238,.45)}
+.mini{display:flex;justify-content:center;gap:10px;margin-top:6px}
+.mini a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:1px solid var(--line);background:rgba(15,15,26,.6);color:var(--muted);transition:.25s}
+.mini a:hover{color:var(--cyan);border-color:var(--cyan);box-shadow:0 0 18px rgba(34,211,238,.35);transform:translateY(-2px)}
+.mini svg{width:20px;height:20px;fill:currentColor}
+
+h2{text-align:center;font:800 clamp(1.4rem,4vw,2rem) var(--head);margin:0 0 20px;letter-spacing:-.01em}
+.about p{max-width:56ch;color:var(--muted);font-size:1.1rem;margin:0 auto;text-align:center}
+
+/* social cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:28px;border-radius:18px;background:linear-gradient(160deg,rgba(24,24,46,.75),rgba(12,12,22,.75));
+  border:1px solid var(--line);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s}
+.card:hover{transform:translateY(-8px);border-color:var(--c);box-shadow:0 0 0 1px var(--c),0 18px 60px -10px var(--c)}
+.card svg{width:38px;height:38px;fill:var(--c);filter:drop-shadow(0 0 10px var(--c))}
+.card h3{font:800 1.15rem var(--head);margin:0}
+.card span{color:var(--muted);font-size:.95rem}
+.yt{--c:#a78bfa}.tg{--c:#22d3ee}.tt{--c:#7c8cff}
+
+footer{border-top:1px solid var(--line);padding:30px 0 40px;color:var(--muted);font-size:.9rem}
+footer .wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+footer nav{display:flex;justify-content:center;gap:20px}
+footer nav a:hover{color:var(--cyan)}
+
+/* page-load entrance (single orchestrated sequence) */
+.in{opacity:0;transform:translateY(16px);animation:in .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0)*.12s)}
+@keyframes in{to{opacity:1;transform:none}}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .8s,transform .8s}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.in,.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><i></i><i></i></div>
+<div class="art" aria-hidden="true">
+  <!-- Minecraft-style: cube, pixel pickaxe, stepped blocks -->
+  <svg viewBox="0 0 100 100" style="--s:120px;--c:#22d3ee;--r:-6deg;left:3%;top:9%"><polygon points="50,8 90,30 50,52 10,30" fill="currentColor"/><polygon points="10,30 50,52 50,94 10,72" fill="currentColor" opacity=".55"/><polygon points="90,30 50,52 50,94 90,72" fill="currentColor" opacity=".3"/></svg>
+  <svg viewBox="0 0 80 80" style="--s:110px;--c:#8b5cf6;--r:12deg;right:4%;top:44%;--t:19s" class="m-hide" fill="currentColor"><rect x="30" y="10" width="10" height="70"/><rect x="20" y="10" width="10" height="10"/><rect x="40" y="10" width="10" height="10"/><rect x="10" y="20" width="10" height="10"/><rect x="50" y="20" width="10" height="10"/><rect x="0" y="30" width="10" height="10"/><rect x="60" y="30" width="10" height="10"/></svg>
+  <svg viewBox="0 0 90 90" style="--s:100px;--c:#7c8cff;left:2%;top:72%;--t:21s" class="m-hide" fill="currentColor"><rect x="0" y="60" width="30" height="30"/><rect x="30" y="60" width="30" height="30" opacity=".6"/><rect x="30" y="30" width="30" height="30"/><rect x="60" y="60" width="30" height="30" opacity=".4"/><rect x="60" y="30" width="30" height="30" opacity=".6"/><rect x="60" y="0" width="30" height="30"/></svg>
+  <!-- Brawl Stars-style: rounded star, gem, bolt -->
+  <svg viewBox="0 0 100 100" style="--s:105px;--c:#8b5cf6;--r:14deg;right:3%;top:7%;--t:18s" fill="currentColor" stroke="currentColor" stroke-width="8" stroke-linejoin="round"><polygon points="50,8 62,38 94,38 68,58 79,90 50,71 21,90 32,58 6,38 38,38"/></svg>
+  <svg viewBox="0 0 100 100" style="--s:90px;--c:#22d3ee;--r:-10deg;left:4%;top:40%;--t:20s" class="m-hide" fill="currentColor" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><polygon points="20,12 80,12 96,38 50,90 4,38" opacity=".7"/></svg>
+  <svg viewBox="0 0 100 100" style="--s:95px;--c:#a78bfa;--r:8deg;right:5%;top:80%;--t:17s" fill="currentColor" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><polygon points="58,6 18,56 46,56 38,94 82,40 54,40"/></svg>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="title">
+      <div id="mascot" class="in" style="--d:6" aria-hidden="true"><svg viewBox="0 0 100 100"><path d="M60 40q24-6 34 8q-16-3-28 5z" fill="#8b5cf6"/><g class="leg"><rect x="33" y="78" width="13" height="19" rx="6" fill="#120f26" stroke="#8b5cf6" stroke-width="1.5"/></g><g class="leg b"><rect x="54" y="78" width="13" height="19" rx="6" fill="#120f26" stroke="#8b5cf6" stroke-width="1.5"/></g><path d="M30 82V60q0-15 20-15t20 15v22z" fill="#120f26" stroke="#8b5cf6" stroke-width="1.5"/><path d="M33 62q-6 12 3 20M67 62q6 12-3 20" stroke="#8b5cf6" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M26 40q0-31 24-31t24 31q0 10-8 14H34q-8-4-8-14z" fill="#120f26" stroke="#22d3ee" stroke-width="1.5"/><ellipse cx="50" cy="40" rx="15" ry="11" fill="#04040a"/><ellipse cx="44" cy="40" rx="3" ry="4" fill="#22d3ee"/><ellipse cx="56" cy="40" rx="3" ry="4" fill="#22d3ee"/></svg></div>
+      <h1 class="in" style="--d:1">TomBloxX</h1>
+    </div>
+    <p class="role in" style="--d:2">YouTube-креатор та геймер</p>
+    <p class="lead in" style="--d:3">Створюю відео, розважаю та ділюся своїм gaming-контентом.</p>
+    <a class="btn in" style="--d:4" data-link="youtube" href="#" target="_blank" rel="noopener">ДИВИТИСЯ НА YOUTUBE →</a>
+    <div class="mini in" style="--d:5">
+      <a data-link="youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2C.5 9.1.5 12 .5 12s0 2.9.5 4.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8zM9.7 15.5v-7l6 3.5z"/></svg></a>
+      <a data-link="telegram" href="#" target="_blank" rel="noopener" aria-label="Telegram"><svg viewBox="0 0 24 24"><path d="M21.9 3.3 2.6 10.8c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 1.9 5.8c.2.6.1.9.8.9.5 0 .8-.2 1.1-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.7-.8l3.2-15.2c.3-1.3-.5-1.9-1.4-1.5zM8.5 13.3l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.3z"/></svg></a>
+      <a data-link="tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24"><path d="M16.6 2h-3.3v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .8.1V9.1a6.3 6.3 0 1 0 5.4 6.2V8.6a7.6 7.6 0 0 0 4.4 1.4V6.7a4.4 4.4 0 0 1-4.4-4.7z"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<section class="videos rv">
+    <div class="wrap">
+      <h2>ОСТАННІ ВІДЕО</h2>
+      <div class="vgrid" id="vgrid" aria-live="polite"></div>
+    </div>
+  </section>
+
+<main>
+  <section class="about rv">
+    <div class="wrap">
+      <h2>ПРО TOMBLOXX</h2>
+      <p>TomBloxX — YouTube-креатор, який створює розважальний gaming-контент. Тут можна знайти нові відео, короткі моменти та актуальні новини з моїх соціальних мереж.</p>
+    </div>
+  </section>
+
+  <section class="rv">
+    <div class="wrap cards">
+      <a class="card yt" data-link="youtube" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M23 7.2a3 3 0 0 0-2.1-2.1C19 4.6 12 4.6 12 4.6s-7 0-8.9.5A3 3 0 0 0 1 7.2C.5 9.1.5 12 .5 12s0 2.9.5 4.8a3 3 0 0 0 2.1 2.1c1.9.5 8.9.5 8.9.5s7 0 8.9-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-4.8.5-4.8s0-2.9-.5-4.8zM9.7 15.5v-7l6 3.5z"/></svg>
+        <h3>YOUTUBE</h3><span>Перейти на YouTube</span>
+      </a>
+      <a class="card tg" data-link="telegram" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M21.9 3.3 2.6 10.8c-1.3.5-1.3 1.3-.2 1.6l4.9 1.5 1.9 5.8c.2.6.1.9.8.9.5 0 .8-.2 1.1-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.7-.8l3.2-15.2c.3-1.3-.5-1.9-1.4-1.5zM8.5 13.3l9.6-6c.5-.3.9-.1.5.2l-7.9 7.1-.3 3.3z"/></svg>
+        <h3>TELEGRAM</h3><span>Приєднатися до Telegram</span>
+      </a>
+      <a class="card tt" data-link="tiktok" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M16.6 2h-3.3v13.3a2.9 2.9 0 1 1-2.9-2.9c.3 0 .6 0 .8.1V9.1a6.3 6.3 0 1 0 5.4 6.2V8.6a7.6 7.6 0 0 0 4.4 1.4V6.7a4.4 4.4 0 0 1-4.4-4.7z"/></svg>
+        <h3>TIKTOK</h3><span>Дивитися TikTok</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="price rv">
+    <div class="wrap">
+      <h2>📢 ПРАЙС НА РЕКЛАМУ</h2>
+      <div class="pbox">
+        <h3 class="pgroup">🔹 Реклама за підписників</h3>
+        <div class="prow"><span class="pname">500 підписників</span><span class="pcost">200 грн</span></div>
+        <h3 class="pgroup">🔹 Додаткові послуги</h3>
+        <div class="prow"><span class="pname">Додавання в друзі в Telegram</span><span class="pcost">70 грн</span></div>
+        <div class="prow"><span class="pname">Передати привіт комусь</span><span class="pcost">40 грн</span></div>
+        <div class="prow"><span class="pname">Огоньок у TikTok</span><span class="pcost">100 грн</span></div>
+        <div class="prow"><span class="pname">Привітання з днем народження</span><span class="pcost">50 грн</span></div>
+        <div class="pcta"><a class="btn" data-link="telegram" href="#" target="_blank" rel="noopener">ЗАМОВИТИ РЕКЛАМУ →</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>TomBloxX © 2026</div>
+    <nav>
+      <a data-link="youtube" href="#" target="_blank" rel="noopener">YouTube</a>
+      <a data-link="telegram" href="#" target="_blank" rel="noopener">Telegram</a>
+      <a data-link="tiktok" href="#" target="_blank" rel="noopener">TikTok</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+/* ===== ЗМІНЮЙТЕ ТУТ ===== */
+const CONFIG = {
+  youtube:  "https://youtube.com/@tombloxx-gaming-223?si=PLhtyxGBYm_HjV3S",
+  telegram: "https://t.me/tombloxx_gaming",
+  tiktok:   "https://tiktok.com/@tombloxxgaming",
+  videosEndpoint: "/api/latest-videos",   // serverless-ендпоінт (див. README)
+  mascot:   ""   // свій персонаж: data:image/png;base64,... (порожньо = стандартний силует)
+};
+/* ======================== */
+if(CONFIG.mascot){document.getElementById('mascot').innerHTML='<img alt="" src="'+CONFIG.mascot+'">';}
+document.querySelectorAll('[data-link]').forEach(a=>{a.href=CONFIG[a.dataset.link]||'#'});
+/* ----- останні відео (дані з /api/latest-videos) ----- */
+(function(){
+  const box=document.getElementById('vgrid');
+  const state=msg=>{
+    box.innerHTML='';
+    const d=document.createElement('div');d.className='vstate';
+    const p=document.createElement('p');p.textContent=msg;p.style.margin='0';
+    const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener';
+    a.href=CONFIG.youtube||'#';a.textContent='ВІДКРИТИ КАНАЛ →';
+    d.append(p,a);box.append(d);
+  };
+  for(let i=0;i<3;i++){const c=document.createElement('div');c.className='vcard sk';c.style.setProperty('--i',i);
+    c.innerHTML='<div class="vthumb"></div><div class="vbody"></div>';box.append(c);}
+  (async()=>{
+    try{
+      const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),10000);
+      const res=await fetch(CONFIG.videosEndpoint,{signal:ctl.signal});clearTimeout(t);
+      if(!res.ok)throw new Error(res.status);
+      const data=await res.json();
+      const items=(data.videos||[]).filter(v=>/^[\w-]{11}$/.test(v.id)&&/^https:\/\/i\.ytimg\.com\//.test(v.thumbnail)).slice(0,3);
+      if(!items.length)return state('Поки що немає відео для показу.');
+      box.innerHTML='';
+      items.forEach((v,i)=>{
+        const a=document.createElement('a');a.className='vcard';a.style.setProperty('--i',i);
+        a.href='https://www.youtube.com/watch?v='+encodeURIComponent(v.id);a.target='_blank';a.rel='noopener';
+        const th=document.createElement('div');th.className='vthumb';
+        const im=document.createElement('img');im.src=v.thumbnail;im.alt='';im.loading='lazy';th.append(im);
+        const b=document.createElement('div');b.className='vbody';
+        const h=document.createElement('h3');h.className='vtitle';h.textContent=v.title;
+        const g=document.createElement('span');g.className='vgo';g.textContent='ДИВИТИСЯ →';
+        b.append(h,g);a.append(th,b);box.append(a);
+      });
+    }catch(e){state('Не вдалося завантажити останні відео. Спробуй пізніше.');}
+  })();
+})();
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
