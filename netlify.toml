@@ -1,0 +1,11 @@
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+
+# щоб сайт звертався до /api/latest-videos
+[[redirects]]
+  from = "/api/latest-videos"
+  to = "/.netlify/functions/latest-videos"
+  status = 200
